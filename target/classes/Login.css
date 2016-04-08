@@ -1,0 +1,13 @@
+.root{
+    -fx-background-color: dimgrey;
+    -styleDefault-color: white;
+}
+.label {
+    -fx-text-fill: -styleDefault-color;
+}
+
+.button {
+    -fx-background-color: snow;
+    -fx-border-radius: 3;
+
+}
