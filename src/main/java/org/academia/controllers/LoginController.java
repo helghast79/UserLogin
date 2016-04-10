@@ -22,6 +22,7 @@ import javafx.util.Duration;
 import org.academia.Navigation;
 
 import org.academia.model.User;
+
 import org.academia.service.user.UserService;
 import org.academia.service.user.UserServiceImpl;
 
@@ -75,20 +76,6 @@ public class LoginController implements Initializable {
     @FXML
     private Button btnRegister;
 
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
-        assert picture != null : "fx:id=\"picture\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert usernameField != null : "fx:id=\"usernameField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert usernameLbl != null : "fx:id=\"usernameLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert passwordLbl != null : "fx:id=\"passwordLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert btnLogin != null : "fx:id=\"btnLogin\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert passWordField != null : "fx:id=\"passWordField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert emailField != null : "fx:id=\"emailField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert emailLbl != null : "fx:id=\"emailLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-        assert btnRegister != null : "fx:id=\"btnRegister\" was not injected: check your FXML file 'LoginWindow.fxml'.";
-
-    }
 
 
     //events -------------------------
@@ -147,18 +134,6 @@ public class LoginController implements Initializable {
             usernameField.setRotate(0);
             usernameLbl.setRotate(0);
 
-
-            /*if (userService.findByName(usernameField.getText()) != null) {
-
-                btnSubmit.setText("Login");
-                emailField.setVisible(false);
-                emailLbl.setVisible(false);
-            } else {
-                btnSubmit.setText("Register");
-                emailField.setVisible(true);
-                emailLbl.setVisible(true);
-            }
-*/
         } else {
             usernameField.setRotate(ROTATE_USERNAME);
             usernameLbl.setRotate(-ROTATE_USERNAME);
@@ -169,49 +144,42 @@ public class LoginController implements Initializable {
 
     //--------------------------------
 
+    @FXML // This method is called by the FXMLLoader when initialization is complete
+    void initialize() {
+        assert picture != null : "fx:id=\"picture\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert usernameField != null : "fx:id=\"usernameField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert usernameLbl != null : "fx:id=\"usernameLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert passwordLbl != null : "fx:id=\"passwordLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert btnLogin != null : "fx:id=\"btnLogin\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert passWordField != null : "fx:id=\"passWordField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert emailField != null : "fx:id=\"emailField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert emailLbl != null : "fx:id=\"emailLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert btnRegister != null : "fx:id=\"btnRegister\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+
+    }
 
 
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        initServices();
+        clearForm();
+        initialTransition(picture);
+
+
+    }
+
+    private void initServices() {
+        //this.userService = new JdbcUserService();
+        this.userService = new UserServiceImpl();
+    }
 
 
 
     public String getEmailFieldText() {
         return emailField.getText();
     }
-
-
-    private void clearForm() {
-        usernameField.setText("");
-        passWordField.setText("");
-        emailField.setText("");
-
-        passWordField.setRotate(ROTATE_PASSWORD);
-        passwordLbl.setRotate(-ROTATE_PASSWORD);
-
-        emailField.setRotate(ROTATE_EMAIL);
-        emailLbl.setRotate(-ROTATE_EMAIL);
-
-        usernameField.setRotate(ROTATE_USERNAME);
-        usernameLbl.setRotate(-ROTATE_USERNAME);
-
-        btnLogin.setRotate(ROTATE_BTN_SUBMIT);
-        btnLogin.setOpacity(1.0d);
-        btnLogin.setDisable(true);
-
-        btnRegister.setRotate(ROTATE_BTN_SUBMIT);
-        btnRegister.setOpacity(1.0d);
-        btnRegister.setDisable(true);
-    }
-
-
-
-
-
-
-
-
-
-
 
     private void validateButtonSubmit() {
 
@@ -285,13 +253,6 @@ public class LoginController implements Initializable {
 
     }
 
-    private void initServices() {
-        //this.userService = new JdbcUserService();
-        this.userService = new UserServiceImpl();
-
-    }
-
-
     private boolean validateEmail(String txtEntered) {
 
         Pattern pattern = Pattern.compile("^.+@.+\\..+$");
@@ -309,16 +270,36 @@ public class LoginController implements Initializable {
         return (txtEntered.length() > 1);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        initServices();
-        clearForm();
-        initialTransition(picture);
 
 
+    private void clearForm() {
+        usernameField.setText("");
+        passWordField.setText("");
+        emailField.setText("");
+
+        passWordField.setRotate(ROTATE_PASSWORD);
+        passwordLbl.setRotate(-ROTATE_PASSWORD);
+
+        emailField.setRotate(ROTATE_EMAIL);
+        emailLbl.setRotate(-ROTATE_EMAIL);
+
+        usernameField.setRotate(ROTATE_USERNAME);
+        usernameLbl.setRotate(-ROTATE_USERNAME);
+
+        btnLogin.setRotate(ROTATE_BTN_SUBMIT);
+        btnLogin.setOpacity(1.0d);
+        btnLogin.setDisable(true);
+
+        btnRegister.setRotate(ROTATE_BTN_SUBMIT);
+        btnRegister.setOpacity(1.0d);
+        btnRegister.setDisable(true);
     }
 
+
+
+
+
+    //Animations
     private void initialTransition(Node o) {
 
 
@@ -369,7 +350,6 @@ public class LoginController implements Initializable {
 
     }
 
-    //Animations
     private void transitionLoginAccepted() {
 
 
@@ -439,55 +419,20 @@ public class LoginController implements Initializable {
         };
 
 
-        RotateTransition r1 = new RotateTransition(Duration.millis(600), usernameField);
-
-        r1.setByAngle(-360);
-        r1.setCycleCount(2);
-
-
-        RotateTransition r2 = new RotateTransition(Duration.millis(800), passWordField);
-
-        r2.setByAngle(360);
-        r2.setCycleCount(2);
-
-
-        RotateTransition r3 = new RotateTransition(Duration.millis(600), emailField);
-
-        r3.setByAngle(-360);
-        r3.setCycleCount(2);
-
-
-        RotateTransition r4 = new RotateTransition(Duration.millis(900), usernameLbl);
-
-        r4.setByAngle(360);
-        r4.setCycleCount(2);
-
-
-        RotateTransition r5 = new RotateTransition(Duration.millis(400), passwordLbl);
-
-        r5.setByAngle(-360);
-        r5.setCycleCount(2);
-
-
-        RotateTransition r6 = new RotateTransition(Duration.millis(700), emailLbl);
-
-        r6.setByAngle(360);
-        r6.setCycleCount(2);
-
-
-        RotateTransition r7 = new RotateTransition(Duration.millis(1000), btnLogin);
-        r7.setByAngle(-360);
-        r7.setCycleCount(2);
-
-        RotateTransition r8 = new RotateTransition(Duration.millis(1300), btnRegister);
-        r8.setByAngle(360);
-        r8.setCycleCount(2);
+        RotateTransition r1 = createRotationTransition(600,usernameField,-360,2);
+        RotateTransition r2 = createRotationTransition(800,passWordField,360,2);
+        RotateTransition r3 = createRotationTransition(600,emailField,-360,2);
+        RotateTransition r4 = createRotationTransition(900,usernameLbl,360,2);
+        RotateTransition r5 = createRotationTransition(400,passwordLbl,-360,2);
+        RotateTransition r6 = createRotationTransition(700,emailLbl,360,2);
+        RotateTransition r7 = createRotationTransition(1000,btnLogin,-360,2);
+        RotateTransition r8 = createRotationTransition(1300,btnRegister,360,2);
 
 
         ParallelTransition ptr = new ParallelTransition();
         ptr.getChildren().addAll(r1, r2, r3, r4, r5, r6, r7,r8);
-        ptr.setCycleCount(2);
-        ptr.setAutoReverse(true);
+        ptr.setCycleCount(1);
+        ptr.setAutoReverse(false);
 
         ptr.setOnFinished(transitionFailedEnded);
         ptr.play();

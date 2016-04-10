@@ -16,7 +16,7 @@ public class Main extends Application {
         Navigation.getInstance().setStage(primaryStage);
         Navigation.getInstance().loadView("LoginWindow");
 
-        HibernateSessionManager.beginTransaction();
+        //HibernateSessionManager.beginTransaction();//moved to: after init transition beause it slow down the animation
 
     }
 
