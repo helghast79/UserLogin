@@ -52,5 +52,7 @@
             <Insets top="10.0" />
          </GridPane.margin>
       </Button>
+      <TextField fx:id="role" alignment="CENTER" onKeyReleased="#roleFieldChanged" prefHeight="27.0" prefWidth="100.0" promptText="Enter Role" rotate="-30.3" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Label id="roleLblCSS" fx:id="roleLbl" alignment="CENTER" prefHeight="39.0" prefWidth="103.0" rotate="-32.0" stylesheets="@/Login.css" text="Role:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
    </children>
 </GridPane>

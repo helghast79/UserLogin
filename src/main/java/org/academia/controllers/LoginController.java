@@ -23,6 +23,12 @@ import org.academia.Navigation;
 
 import org.academia.model.User;
 
+import org.academia.model.dao.RoleDao;
+import org.academia.model.dao.UserDao;
+import org.academia.model.dao.hibernate.HibernateRoleDao;
+import org.academia.model.dao.hibernate.HibernateUserDao;
+import org.academia.persistence.hibernate.HibernateSessionManager;
+import org.academia.persistence.hibernate.HibernateTransactionManager;
 import org.academia.service.user.UserService;
 import org.academia.service.user.UserServiceImpl;
 
@@ -39,9 +45,15 @@ public class LoginController implements Initializable {
     private final double ROTATE_PASSWORD = 3.0d;
     private final double ROTATE_EMAIL = -3.4d;
     private final double ROTATE_BTN_SUBMIT = 10.3d;
+    private final double ROTATE_ROLE = -30.3;
 
     UserService userService;
     //UserService userService;
+
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @FXML
     private ResourceBundle resources;
@@ -75,7 +87,11 @@ public class LoginController implements Initializable {
 
     @FXML
     private Button btnRegister;
+    @FXML
+    private TextField role;
 
+    @FXML
+    private Label roleLbl;
 
 
     //events -------------------------
@@ -98,6 +114,8 @@ public class LoginController implements Initializable {
                 emailField.getText(),
                 passWordField.getText()));
 
+
+        userService.addUserRole(usernameField.getText(),role.getText() );
 
         clearForm();
     }
@@ -142,6 +160,19 @@ public class LoginController implements Initializable {
         validateButtonSubmit();
     }
 
+    @FXML
+    void roleFieldChanged(KeyEvent event) {
+        if (validateRole(role.getText())) {
+            role.setRotate(0);
+            roleLbl.setRotate(0);
+        } else {
+            role.setRotate(ROTATE_ROLE);
+            roleLbl.setRotate(-ROTATE_ROLE);
+        }
+        validateButtonSubmit();
+    }
+
+
     //--------------------------------
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -155,6 +186,9 @@ public class LoginController implements Initializable {
         assert emailField != null : "fx:id=\"emailField\" was not injected: check your FXML file 'LoginWindow.fxml'.";
         assert emailLbl != null : "fx:id=\"emailLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
         assert btnRegister != null : "fx:id=\"btnRegister\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert role != null : "fx:id=\"role\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+        assert roleLbl != null : "fx:id=\"roleLbl\" was not injected: check your FXML file 'LoginWindow.fxml'.";
+
 
     }
 
@@ -172,7 +206,7 @@ public class LoginController implements Initializable {
 
     private void initServices() {
         //this.userService = new JdbcUserService();
-        this.userService = new UserServiceImpl();
+        //this.userService = new UserServiceImpl(new HibernateUserDao(), new HibernateRoleDao(), new HibernateTransactionManager());
     }
 
 
@@ -186,7 +220,7 @@ public class LoginController implements Initializable {
         boolean allOk = false;
 
 
-        if (usernameField.getRotate() == 0 && passWordField.getRotate() == 0) {
+        if (usernameField.getRotate() == 0 && passWordField.getRotate() == 0 && role.getRotate()==0) {
 
             if (emailField.getText().equals("") ) {
 
@@ -270,7 +304,10 @@ public class LoginController implements Initializable {
         return (txtEntered.length() > 1);
     }
 
+    private boolean validateRole(String txtEntered) {
 
+        return (txtEntered.length() > 1);
+    }
 
     private void clearForm() {
         usernameField.setText("");

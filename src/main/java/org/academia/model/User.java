@@ -1,6 +1,7 @@
 package org.academia.model;
 
 
+import java.util.Set;
 
 /**
  * Created by codecadet on 15/03/16.
@@ -11,6 +12,7 @@ public class User {
     private String password;
     private String username;
     private String email;
+    private Set<Role> roleSet;
 
 
     public User(){}
@@ -54,5 +56,11 @@ public class User {
         this.email = email;
     }
 
+    public Set<Role> getRoleSet() {
+        return roleSet;
+    }
 
+    public void setRoleSet(Set<Role> roleSet) {
+        this.roleSet = roleSet;
+    }
 }

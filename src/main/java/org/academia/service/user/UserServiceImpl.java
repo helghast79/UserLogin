@@ -1,131 +1,172 @@
 package org.academia.service.user;
 
+import org.academia.model.Role;
 import org.academia.model.User;
 
 
-import org.academia.model.dao.hibernate.HibernateUserDao;
-import org.academia.persistence.hibernate.HibernateTransactionManager;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import org.academia.model.dao.RoleDao;
+import org.academia.model.dao.UserDao;
+import org.academia.persistence.TransactionManager;
+import org.hibernate.TransactionException;
 
 /**
  * Created by codecadet on 31/03/16.
  */
 public class UserServiceImpl implements UserService {
 
-    HibernateUserDao hbUser;
+    UserDao userDao;
+    RoleDao roleDao;
+    TransactionManager tx;
 
-    public UserServiceImpl() {
-        hbUser = new HibernateUserDao();
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao, TransactionManager tx) {
+        this.userDao = userDao;
+        this.roleDao = roleDao;
+        this.tx = tx;
     }
 
+    /**
+     * Authenticates the user using the given username and password
+     *
+     * @param username the user name
+     * @param password the user password
+     * @return true if authenticated
+     */
     @Override
-    public boolean authenticate(String userName, String password) {
-       User user = hbUser.findByName(userName);
+    public boolean authenticate(String username, String password) {
 
-        if(user == null) return false;
-
-        return user.getPassword().equals(password);
-
-    }
-
-    @Override
-    public void addUser(User name) {
-        hbUser.update(name);
-    }
-
-    @Override
-    public User findByName(String name) {
-        return hbUser.findByName(name);
-    }
-
-    @Override
-    public int count() {
-        return 0;
-    }
-
-
-/*
-
-    public boolean authenticate(String userName, String password) {
+        boolean result = false;
 
         try {
 
-            Session session = HibernateTransactionManager.getInstance().beginTransaction();
+            tx.begin();
 
-            User userFromDB = (User)session.createCriteria( User.class ).
-                    add( Restrictions.eq("username", userName) ).
-                    uniqueResult();
+            User user = userDao.findByName(username);
+            result = (user != null && user.getPassword().equals(password));
 
-            if(userFromDB==null){
-                return false;
-            }
+            tx.commit();
 
-            if(!userFromDB.getPassword().equals(password)){
-                return false;
-            }
-
-
-            model.HibernateSessionManager.getInstance().commitTransaction();
-
-        } catch (HibernateException ex) {
+        } catch (TransactionException ex) {
 
             System.out.println(ex.getMessage());
-            HibernateTransactionManager.getInstance().rollbackTransaction();
+            tx.rollback();
 
         }
 
+        return result;
 
-        return true;
     }
 
+    /**
+     * Adds a new user
+     *
+     * @param user the new user to add
+     */
+    @Override
     public void addUser(User user) {
+
         try {
 
-            Session session = HibernateTransactionManager.getInstance().beginTransaction();
+            tx.begin();
 
-            session.save(user);
+            if (userDao.findByName(user.getUsername()) == null) {
+                userDao.save(user);
+            }
 
-            HibernateTransactionManager.getInstance().commitTransaction();
+            tx.commit();
 
-        } catch (HibernateException ex) {
+        } catch (TransactionException ex) {
 
             System.out.println(ex.getMessage());
-            HibernateTransactionManager.getInstance().rollbackTransaction();
+            tx.rollback();
 
         }
 
+    }
+
+    @Override
+    public void addUserRole(String username, String role) {
+
+        try {
+
+            tx.begin();
+
+            User user = userDao.findByName(username);
+            Role r = roleDao.findByName(role);
+
+            if (user != null && r != null) {
+                user.getRoleSet().add(r);
+                userDao.save(user);
+            }
+
+            tx.commit();
+
+        } catch (TransactionException ex) {
+
+            System.out.println(ex.getMessage());
+            tx.rollback();
+
+        }
 
     }
 
-    public User findByName(String name) {
+    /**
+     * Finds a user by name
+     *
+     * @param username the user name used to lookup a user
+     * @return a new User if found, null otherwise
+     */
+    @Override
+    public User findByName(String username) {
 
         User user = null;
 
         try {
 
-            Session session = HibernateTransactionManager.getInstance().beginTransaction();
+            tx.begin();
 
-            User userFromDB = (User)session.createCriteria( User.class ).
-                    add( Restrictions.eq("username", name) ).
-                    uniqueResult();
+            user = userDao.findByName(username);
 
+            tx.commit();
 
-            HibernateTransactionManager.getInstance().commitTransaction();
-
-        } catch (HibernateException ex) {
+        } catch (TransactionException ex) {
 
             System.out.println(ex.getMessage());
-            HibernateTransactionManager.getInstance().rollbackTransaction();
+            tx.rollback();
 
         }
 
-
         return user;
+
     }
 
-    public int count() {
-        return 0;
-    }*/
+    /**
+     * Count the number of existing users
+     *
+     * @return the number of users
+     */
+    @Override
+    public long count() {
+
+        long size = 0;
+
+        try {
+
+            tx.begin();
+
+            size = userDao.count();
+
+            tx.commit();
+
+        } catch (TransactionException ex) {
+
+            System.out.println(ex.getMessage());
+            tx.rollback();
+
+        }
+
+        return size;
+
+    }
+
+
 }

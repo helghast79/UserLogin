@@ -1,7 +1,9 @@
 package org.academia.model.dao;
 
-/**
- * Created by codecadet on 07/04/16.
- */
-public interface RoleDao {
+import org.academia.model.Role;
+
+public interface RoleDao extends Dao<Role> {
+
+    public Role findByName(String name);
+
 }

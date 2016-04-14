@@ -1,11 +1,15 @@
 package org.academia;
 
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -24,8 +28,16 @@ public class Navigation {
     private Stage stage; // reference to the application window
 
 
+    private Map<String,Initializable> controllers = new HashMap<String, Initializable>();
+
+
     // private constructor so its not possible to instantiate from outside
     private Navigation() {
+    }
+
+
+    public void setControllers(Map<String, Initializable> controllers) {
+        this.controllers = controllers;
     }
 
     // static method that returns the instance
@@ -62,6 +74,18 @@ public class Navigation {
             // Instantiate the view and the controller
             FXMLLoader fxmlLoader;
             fxmlLoader = new FXMLLoader(getClass().getResource(Settings.FILES_FXML_FOLDER + view + ".fxml"));
+
+
+            //spring is handling creating
+            fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
+
+                @Override
+                public Object call(Class<?> param) {
+                    return controllers.get(param.getSimpleName());
+                }
+            });
+
+
             Parent root = fxmlLoader.load();
 
             //store the loader because it's necessary to comunicate between org.academiadecodigo.bootcamp.controllers

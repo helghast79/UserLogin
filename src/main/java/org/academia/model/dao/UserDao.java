@@ -1,18 +1,9 @@
 package org.academia.model.dao;
 
-/**
- * Created by codecadet on 07/04/16.
- */
-public interface UserDao<T> extends Dao<T> {
+import org.academia.model.User;
 
+public interface UserDao extends Dao<User> {
 
+    public User findByName(String name);
 
-
-
-    /**
-     * Returns a new dao object corresponding to the database table row matching provided name
-     * @param name
-     * @return
-     */
-    T findByName(String name);
 }

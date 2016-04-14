@@ -3,7 +3,7 @@ package org.academia.persistence.hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
@@ -11,36 +11,21 @@ import org.hibernate.service.ServiceRegistry;
 public final class HibernateSessionManager {
 
 
-    private final static String HIBERNATE_CONFIG = "/persistence/hibernate.cfg.xml";
+    private final String HIBERNATE_CONFIG = "/persistence/hibernate.cfg.xml";
 
     /**
      * Factory of Hibernate Sessions, which consist on single-threaded,
      * short-lived objects, conceptually modeling a "Unit of Work"
      */
-    private static SessionFactory sessionFactory;
-
-    static{
-
-        try {
-
-            // Hold services needed by Hibernate
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .configure(HIBERNATE_CONFIG) // Load settings from hibernate.cfg.xml
-                    .build();
-
-            sessionFactory = new MetadataSources(serviceRegistry)
-                    .buildMetadata() // Tell Hibernate about sources of metadata (mappings)
-                    .buildSessionFactory();
-
-        } catch (HibernateException ex) {
-
-            ex.printStackTrace();
-            throw new ExceptionInInitializerError("Error creating hibernate session factory: " + ex.getMessage());
-        }
-    }
-
+    private  SessionFactory sessionFactory;
+    
     private HibernateSessionManager() {
 
+    }
+
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     /**
@@ -48,7 +33,7 @@ public final class HibernateSessionManager {
      *
      * @return the session associated with the transaction
      */
-    public static Session beginTransaction() {
+    public  Session beginTransaction() {
 
         Session session = getSession();
         session.beginTransaction();
@@ -60,14 +45,14 @@ public final class HibernateSessionManager {
     /**
      * Terminates the current transaction
      */
-    public static void commitTransaction() {
+    public  void commitTransaction() {
         getSession().getTransaction().commit();
     }
 
     /**
      * Rollback the current transaction
      */
-    public static void rollbackTransaction() {
+    public  void rollbackTransaction() {
         getSession().getTransaction().rollback();
     }
 
@@ -76,7 +61,7 @@ public final class HibernateSessionManager {
      *
      * @return The current session
      */
-    private static Session getSession() {
+    public Session getSession() {
 
         /*
 
@@ -97,7 +82,7 @@ public final class HibernateSessionManager {
      * Closes the Hibernate Session factory,
      * necessary for application to quit
      */
-    public static void close() {
+    public  void close() {
         sessionFactory.close();
     }
 
